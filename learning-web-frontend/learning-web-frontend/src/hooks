@@ -1,0 +1,4 @@
+// filepath: learning-web-frontend/src/hooks/index.ts
+export const useCustomHook = () => {
+  // Custom hook logic goes here
+};
