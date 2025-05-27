@@ -87,3 +87,12 @@ npm install
 ```
 npm run dev
 ```
+
+---
+
+# 📝 API Documentation
+Visit ```http://localhost:5000/api-docs``` for Swagger-powered API docs.
+
+---
+# 📄 License
+MIT © Ansif
