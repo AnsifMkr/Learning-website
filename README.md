@@ -71,11 +71,19 @@ NEXTAUTH_URL=http://localhost:3000
 
 # Installation
 ## 1. Clone the repo
+```
 git clone https://github.com/AnsifMkr/Learning-website.git
-cd skillspark
+```
+```
+cd Learning-website
+```
 
 ## 2. Install dependencies (both frontend & backend)
+```
 npm install
+```
 
 ## 3. Run the dev server
+```
 npm run dev
+```
