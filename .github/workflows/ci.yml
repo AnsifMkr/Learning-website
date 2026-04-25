@@ -32,7 +32,6 @@ jobs:
         env:
           # This maps your GitHub secrets to environment variables in the runner.
           MONGO_URI: ${{ secrets.MONGO_URI }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
           # Add any other required secrets below:
           # GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: npm test
