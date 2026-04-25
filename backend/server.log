@@ -1,0 +1,16 @@
+Server running on port 5000
+(node:55520) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+MongoDB connected
+Error: 400 Your request is missing file.
+    at APIError.generate (/home/ansif/Documents/Learning-website/backend/node_modules/@imagekit/nodejs/core/error.js:40:20)
+    at ImageKit.makeStatusError (/home/ansif/Documents/Learning-website/backend/node_modules/@imagekit/nodejs/client.js:150:32)
+    at ImageKit.makeRequest (/home/ansif/Documents/Learning-website/backend/node_modules/@imagekit/nodejs/client.js:292:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async exports.uploadAvatar (/home/ansif/Documents/Learning-website/backend/controllers/userController.js:56:22)
+Error: 400 Your request is missing file.
+    at APIError.generate (/home/ansif/Documents/Learning-website/backend/node_modules/@imagekit/nodejs/core/error.js:40:20)
+    at ImageKit.makeStatusError (/home/ansif/Documents/Learning-website/backend/node_modules/@imagekit/nodejs/client.js:150:32)
+    at ImageKit.makeRequest (/home/ansif/Documents/Learning-website/backend/node_modules/@imagekit/nodejs/client.js:292:30)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async exports.uploadAvatar (/home/ansif/Documents/Learning-website/backend/controllers/userController.js:56:22)
