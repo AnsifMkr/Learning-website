@@ -7,7 +7,24 @@ const quizRoutes = require('./routes/quizRoutes');
 const userRoutes = require('./routes/userRoutes');
 
 const app = express();
-app.use(cors());
+const allowedOrigins = [
+  'https://skillspark-self.vercel.app',
+  'http://localhost:3000',
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (e.g. mobile apps, curl, Postman)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS blocked: ${origin}`));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 app.use(express.json());
 
 const { clerkMiddleware } = require('@clerk/express');
