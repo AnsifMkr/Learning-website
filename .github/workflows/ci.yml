@@ -63,5 +63,5 @@ jobs:
       - name: Build Next.js App
         env:
           # Provide build-time secrets here if required by Next.js
-          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.CLERK_PUBLISHABLE_KEY }}
         run: npm run build
