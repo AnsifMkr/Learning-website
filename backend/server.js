@@ -40,3 +40,5 @@ app.use(errorHandler);
 const { swaggerUi, specs } = require('./swagger/swagger');
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
+// Export for Vercel serverless deployment
+module.exports = app;
