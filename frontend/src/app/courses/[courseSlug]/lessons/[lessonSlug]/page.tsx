@@ -60,7 +60,7 @@ export default function LessonDetailPage() {
 
   return (
     <div className="max-w-5xl mx-auto p-6 py-10 space-y-8">
-      <Link href={`/courses/${courseId}`} className="text-sm font-bold text-gray-400 hover:text-gray-800 inline-flex items-center transition bg-gray-50 px-4 py-2 rounded-full border">
+      <Link href={`/courses/${courseSlug}`} className="text-sm font-bold text-gray-400 hover:text-gray-800 inline-flex items-center transition bg-gray-50 px-4 py-2 rounded-full border">
         ← Back to Syllabus
       </Link>
 
@@ -93,7 +93,7 @@ export default function LessonDetailPage() {
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path></svg>
                   Learned
                 </span>
-                <button onClick={() => router.push(`/courses/${courseId}/lessons/${lessonId}/quiz`)} className="bg-yellow-400 text-black px-8 py-4 rounded-xl font-black hover:bg-white transition-all shadow-lg active:scale-95">
+                <button onClick={() => router.push(`/courses/${courseSlug}/lessons/${lessonSlug}/quiz`)} className="bg-yellow-400 text-black px-8 py-4 rounded-xl font-black hover:bg-white transition-all shadow-lg active:scale-95">
                   Deploy AI Quiz →
                 </button>
               </div>
