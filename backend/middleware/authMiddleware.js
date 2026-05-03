@@ -41,7 +41,6 @@ exports.protect = async (req, res, next) => {
         user.avatarUrl = clerkImageUrl;
       }
       await user.save();
-    }
     
     req.user = user;
     next();
