@@ -11,19 +11,19 @@ const app = express();
 const allowedOrigins = [
   'https://skillspark-self.vercel.app',
   'http://localhost:3000',
+  // Support additional frontend URLs via env var (comma-separated)
+  ...(process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+    : []),
 ];
 
 app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (e.g. mobile apps, curl, Postman)
-    if (
-      !origin || 
-      allowedOrigins.includes(origin) || 
-      origin === process.env.FRONTEND_URL || 
-      (origin && origin.endsWith('.vercel.app'))
-    ) {
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      console.warn(`[CORS] Blocked request from origin: ${origin}`);
       callback(new Error(`CORS blocked: ${origin}`));
     }
   },
