@@ -7,6 +7,7 @@ const quizRoutes = require('./routes/quizRoutes');
 const userRoutes = require('./routes/userRoutes');
 
 const app = express();
+<<<<<<< HEAD
 
 const allowedOrigins = [
   'https://skillspark-self.vercel.app',
@@ -15,6 +16,11 @@ const allowedOrigins = [
   ...(process.env.ALLOWED_ORIGINS
     ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
     : []),
+=======
+const allowedOrigins = [
+  'https://skillspark-self.vercel.app',
+  'http://localhost:3000',
+>>>>>>> 10e7c536420da7c3af55d2fe1654dae3713c217f
 ];
 
 app.use(cors({
@@ -23,7 +29,10 @@ app.use(cors({
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+<<<<<<< HEAD
       console.warn(`[CORS] Blocked request from origin: ${origin}`);
+=======
+>>>>>>> 10e7c536420da7c3af55d2fe1654dae3713c217f
       callback(new Error(`CORS blocked: ${origin}`));
     }
   },
@@ -31,7 +40,10 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+<<<<<<< HEAD
 
+=======
+>>>>>>> 10e7c536420da7c3af55d2fe1654dae3713c217f
 app.use(express.json());
 
 const { clerkMiddleware } = require('@clerk/express');
@@ -64,5 +76,8 @@ app.use(errorHandler);
 const { swaggerUi, specs } = require('./swagger/swagger');
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 10e7c536420da7c3af55d2fe1654dae3713c217f
 module.exports = app;
