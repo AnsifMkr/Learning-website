@@ -1,10 +1,10 @@
 /** @type {import('next').NextConfig} */
-const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.BACKEND_URL;
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.BACKEND_URL || 'https://skillspark-backend-tau.vercel.app';
 
-if (!backendUrl) {
+if (!process.env.NEXT_PUBLIC_BACKEND_URL && !process.env.BACKEND_URL) {
   console.warn(
     '[next.config] WARNING: Neither NEXT_PUBLIC_BACKEND_URL nor BACKEND_URL is set. ' +
-    'API rewrites will target http://localhost:5000 which will fail in production!'
+    'API rewrites will target the deployed backend https://skillspark-backend-tau.vercel.app.'
   );
 }
 
@@ -13,10 +13,9 @@ module.exports = {
     ignoreDuringBuilds: true,
   },
   async rewrites() {
-    const destination = backendUrl || 'http://localhost:5000';
     return [{
       source: '/api/:path*',
-      destination: `${destination}/api/:path*`,
+      destination: `${backendUrl}/api/:path*`,
     }];
   },
 };
