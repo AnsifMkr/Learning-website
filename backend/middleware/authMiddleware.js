@@ -1,34 +1,53 @@
-const { requireAuth, getAuth } = require('@clerk/express');
+const { getAuth } = require('@clerk/express');
+const { createClerkClient } = require('@clerk/backend');
 const User = require('../models/User');
+
+// Initialize the Clerk Backend client once so we can call the Clerk API directly.
+// This lets us fetch public_metadata.role reliably without needing it baked into
+// the JWT session token (which requires a custom Clerk Dashboard configuration).
+const clerk = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
 
 exports.protect = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
-    console.log('Auth header present:', !!authHeader, 'Value starts with Bearer:', authHeader?.startsWith('Bearer '));
+    console.log('Auth header present:', !!authHeader);
+
     const { userId: clerkId, sessionClaims } = getAuth(req);
-    console.log('Auth check:', { clerkId, hasSessionClaims: !!sessionClaims });
+    console.log('Auth check — clerkId:', clerkId);
 
     if (!clerkId) {
-      console.log('No clerkId found, auth failed');
       return res.status(401).json({ error: 'Unauthorized: No Clerk ID found' });
     }
 
-    // Clerk stores the role in public_metadata on the JWT session claims.
-    // The exact path depends on the Clerk JWT template configuration:
-    //   - Default sessions: sessionClaims.public_metadata.role
-    //   - Custom JWT template: may differ
-    // We try multiple known paths to be resilient.
-    console.log('Full sessionClaims:', JSON.stringify(sessionClaims));
-    const roleFromClerk =
-      sessionClaims?.public_metadata?.role ||
-      sessionClaims?.metadata?.public?.role ||
-      sessionClaims?.role ||
-      'user';
+    // ── Resolve the role ────────────────────────────────────────────────────
+    // Strategy 1: Try the JWT sessionClaims first (fast, no extra API call).
+    //   Works only if the Clerk Dashboard → Sessions → Customize session token
+    //   has been set to include {{ user.public_metadata.role }} as a claim.
+    // Strategy 2: Fall back to the Clerk Backend API (always accurate, costs
+    //   one extra HTTP call per request but never wrong).
+    let roleFromClerk =
+      sessionClaims?.public_metadata?.role ||   // custom JWT claim (preferred)
+      sessionClaims?.metadata?.public?.role ||   // alternative JWT template shape
+      sessionClaims?.role ||                     // flat custom claim
+      null;
+
+    if (!roleFromClerk) {
+      // JWT claims didn't include the role — fetch directly from Clerk API
+      try {
+        const clerkUser = await clerk.users.getUser(clerkId);
+        roleFromClerk = clerkUser?.publicMetadata?.role || 'user';
+        console.log('Role fetched from Clerk API:', roleFromClerk);
+      } catch (clerkErr) {
+        console.error('Failed to fetch Clerk user for role:', clerkErr.message);
+        roleFromClerk = 'user'; // safe fallback
+      }
+    } else {
+      console.log('Role resolved from JWT claims:', roleFromClerk);
+    }
+
     const clerkImageUrl = sessionClaims?.image_url || null;
 
-    console.log('Role from Clerk session claims:', roleFromClerk);
-
-    // Find user in MongoDB or create them Just-In-Time
+    // ── Sync user to MongoDB ────────────────────────────────────────────────
     let user = await User.findOne({ clerkId });
     if (!user) {
       user = await User.create({
@@ -38,14 +57,16 @@ exports.protect = async (req, res, next) => {
         role: roleFromClerk,
         avatarUrl: clerkImageUrl,
       });
+      console.log('JIT user created with role:', roleFromClerk);
     } else {
-      // Always sync role from Clerk's public_metadata so dashboard changes take effect immediately
+      // Always sync role from Clerk so Clerk Dashboard changes propagate immediately
       user.role = roleFromClerk;
-      // Only sync avatar from Clerk if the user hasn't set a custom one yet
+      // Only sync avatar from Clerk if the user hasn't set a custom one
       if (!user.avatarUrl && clerkImageUrl) {
         user.avatarUrl = clerkImageUrl;
       }
       await user.save();
+      console.log('User synced — role set to:', user.role);
     }
 
     req.user = user;
