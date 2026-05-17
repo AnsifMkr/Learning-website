@@ -117,7 +117,11 @@ exports.submitQuiz = async (req, res, next) => {
     }
 
     // Check if the user already mastered this quiz (we should block a retake)
-    if (req.user.completedQuizzes.includes(quiz._id)) {
+    // Use string comparison to avoid ObjectId reference equality mismatch
+    const alreadyDoneQuiz = req.user.completedQuizzes.some(
+      (id) => id.toString() === quiz._id.toString()
+    );
+    if (alreadyDoneQuiz) {
       return res.status(403).json({ error: 'You have already completed this quiz.' });
     }
 

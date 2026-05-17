@@ -124,8 +124,15 @@ exports.completeLesson = async (req, res, next) => {
       return res.status(400).json({ error: 'lessonId is required' });
     }
 
-    // Add to completedLessons if not already there
-    if (!req.user.completedLessons.includes(lessonId)) {
+    // Declare outside the if block so it's always in scope for res.json()
+    let newlyAwardedBadges = [];
+
+    // Use string comparison to avoid ObjectId vs string mismatch
+    const alreadyCompleted = req.user.completedLessons.some(
+      (id) => id.toString() === lessonId.toString()
+    );
+
+    if (!alreadyCompleted) {
       req.user.completedLessons.push(lessonId);
       req.user.xp += 10; // award 10 XP per lesson
 
@@ -162,7 +169,7 @@ exports.completeLesson = async (req, res, next) => {
       // ────────────────────────────────────────────────────────────────
 
       // Trigger gamification engine
-      const newlyAwardedBadges = checkAndAwardBadges(req.user);
+      newlyAwardedBadges = checkAndAwardBadges(req.user);
 
       await req.user.save();
 
@@ -176,7 +183,7 @@ exports.completeLesson = async (req, res, next) => {
       xp: req.user.xp,
       completedLessons: req.user.completedLessons,
       badges: req.user.badges,
-      newBadges: newlyAwardedBadges || [], // Frontend can use this to show Toast alerts if returned from completeLesson
+      newBadges: newlyAwardedBadges,
       currentYearStreak: req.user.currentYearStreak,
       longestStreak: req.user.longestStreak,
       yearlyActivity: Object.fromEntries(req.user.yearlyActivity || new Map()),
